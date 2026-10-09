@@ -94,7 +94,7 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
 
           <!-- Email (Optional) -->
           <div class="form-group">
-            <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan bukti isian)</span></label>
+            <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan salinan isian Form ini)</span></label>
             <input type="email" id="email" name="email" placeholder="contoh@email.com" autocomplete="email" />
           </div>
 
@@ -224,7 +224,7 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
       const formData = new FormData(form);
       const data = new URLSearchParams(formData);
 
-	fetch(scriptURL, { 
+fetch(scriptURL, { 
         method: 'POST', 
         body: data 
       })
@@ -264,17 +264,12 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
           form.reset();
           document.getElementById('lingkSelect').disabled = true;
 
-        } else if (response.result === 'duplicate') {
-          // Alert user if Lingkungan is already registered
-          alert('⚠️ Pendaftaran Ditolak: ' + response.message);
+        } else if (response.result === 'quota_full' || response.result === 'quota_exceeded' || response.result === 'duplicate') {
+          alert('⚠️ Batas Pendaftaran: ' + response.message);
 
         } else {
           alert('Error: ' + (response.error || 'Gagal menyimpan data'));
         }
-      })
-      .catch(error => {
-        console.error('Error!', error.message);
-        alert('Gagal terhubung ke server. Periksa koneksi internet Anda.');
       })
       .finally(() => {
         submitBtn.disabled = false;
