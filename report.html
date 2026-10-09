@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Laporan Peserta Sosialisasi Bulan Keluarga 2026</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .report-container {
+      max-width: 95%;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .report-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .report-header h1 {
+      color: #1b4332;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .pivot-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 800px;
+    }
+
+    .pivot-table th, 
+    .pivot-table td {
+      border: 1px solid #dcdcdc;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .pivot-table th {
+      background-color: #2d6a4f;
+      color: #ffffff;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .pivot-table th.wilayah-header {
+      background-color: #1b4332;
+      width: 140px;
+    }
+
+    .pivot-table td.wilayah-cell {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      color: #1b4332;
+      white-space: nowrap;
+    }
+
+    .participant-line {
+      display: block;
+      line-height: 1.4;
+    }
+
+    .participant-line.p1 {
+      color: #2b2b2b;
+      font-weight: bold;
+    }
+
+    .participant-line.p2 {
+      color: #2b2b2b;
+	  font-weight: bold;
+      font-size: 13px;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed #ddd;
+    }
+
+    .loading-status {
+      text-align: center;
+      padding: 30px;
+      font-size: 16px;
+      color: #666;
+    }
+
+    .refresh-btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 16px;
+      background-color: #2d6a4f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="report-container">
+    <div class="report-header">
+      <h1>Rekapitulasi Peserta Sosialisasi Bulan Keluarga 2026</h1>
+      <p>Paroki Katedral Jakarta</p>
+      <button class="refresh-btn" onclick="location.reload()">🔄 Refresh Data</button>
+    </div>
+
+    <div id="statusBox" class="loading-status">Memuat Data...</div>
+
+    <table id="pivotTable" class="pivot-table hidden">
+      <thead>
+        <tr>
+          <th class="wilayah-header">Wilayah</th>
+          <th>Lingkungan 1</th>
+          <th>Lingkungan 2</th>
+          <th>Lingkungan 3</th>
+          <th>Lingkungan 4</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Public Master reference structure sheet
+    const masterSheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
+    
+    // Private Sheet Web App Endpoint (Apps Script Exec URL)
+    const scriptAppUrl = "https://script.google.com/macros/s/AKfycby_B-RuEcSvBo2Oo9HiNpFKm59BvBBk2slqZw68bp0-LDtsEFH5Hdq6JVABUkwiRB9u/exec";
+
+    let masterStructure = [];
+    let registeredData = {};
+
+    // 1. Load Wilayah & Lingkungan matrix from public reference sheet
+    window.handleWildanLingk = function(data) {
+      if (!data.table || !data.table.rows) return;
+
+      const rows = data.table.rows.slice(1);
+      masterStructure = rows.map(row => {
+        const wilayah = (row.c && row.c[0] && row.c[0].v !== null) ? row.c[0].v.toString().trim() : "";
+        const lingk = [];
+        for (let i = 1; i <= 4; i++) {
+          if (row.c && row.c[i] && row.c[i].v !== null && row.c[i].v !== undefined) {
+            const v = row.c[i].v.toString().trim();
+            if (v) lingk.push(v);
+          }
+        }
+        return { wilayah, lingk };
+      }).filter(item => item.wilayah !== "");
+
+      loadPrivateSubmissions();
+    };
+
+    // 2. Fetch participant names securely via Google Apps Script doGet()
+    async function loadPrivateSubmissions() {
+      try {
+        const response = await fetch(scriptAppUrl);
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          data.forEach(item => {
+            if (item.wilayah && item.lingkungan) {
+              const key = `${item.wilayah.toLowerCase()}|${item.lingkungan.toLowerCase()}`;
+              registeredData[key] = {
+                p1: item.nama1 || "",
+                p2: item.nama2 || ""
+              };
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch private submissions:", err);
+      }
+
+      renderPivotTable();
+    }
+
+    // 3. Render Pivot Table
+    function renderPivotTable() {
+      const statusBox = document.getElementById("statusBox");
+      const pivotTable = document.getElementById("pivotTable");
+      const tableBody = document.getElementById("tableBody");
+
+      tableBody.innerHTML = "";
+
+      masterStructure.forEach(item => {
+        const tr = document.createElement("tr");
+
+        const tdWilayah = document.createElement("td");
+        tdWilayah.className = "wilayah-cell";
+        tdWilayah.textContent = item.wilayah;
+        tr.appendChild(tdWilayah);
+
+        for (let i = 0; i < 4; i++) {
+          const td = document.createElement("td");
+          const lingkName = item.lingk[i];
+
+          if (lingkName) {
+            const lookupKey = `${item.wilayah.toLowerCase()}|${lingkName.toLowerCase()}`;
+            const match = registeredData[lookupKey];
+
+            if (match && (match.p1 || match.p2)) {
+              let cellContent = `<strong style="font-size:11px; color:#2d6a4f; display:block; margin-bottom:4px;">${lingkName}</strong>`;
+              if (match.p1) {
+                cellContent += `<span class="participant-line p1">1. ${match.p1}</span>`;
+              }
+              if (match.p2) {
+                cellContent += `<span class="participant-line p2">2. ${match.p2}</span>`;
+              }
+              td.innerHTML = cellContent;
+            } else {
+              td.innerHTML = `<span style="font-size:11px; color:#888; display:block; margin-bottom:4px;">${lingkName}</span><span style="color:#ccc;">-</span>`;
+            }
+          } else {
+            td.innerHTML = "";
+          }
+
+          tr.appendChild(td);
+        }
+
+        tableBody.appendChild(tr);
+      });
+
+      statusBox.classList.add("hidden");
+      pivotTable.classList.remove("hidden");
+    }
+
+    // Start script
+    const scriptMaster = document.createElement("script");
+    scriptMaster.src = `https://docs.google.com/spreadsheets/d/${masterSheetID}/gviz/tq?tqx=responseHandler:handleWildanLingk&sheet=wildanlingk`;
+    document.body.appendChild(scriptMaster);
+  </script>
+
+</body>
+</html>
