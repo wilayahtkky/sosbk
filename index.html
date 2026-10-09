@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Pendaftaran Sosialisasi Bulan Keluarga 2026 - Paroki Katedral Jakarta</title>
+  <meta name="description" content="Kirim Data ke Google Sheet" />
+  <link href="./favicon.png" rel="shortcut icon" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>	
+
+  <div class="container">
+    <!-- Banner Image -->
+    <img src="BulanKeluarga2026.JPG" alt="Bulan Keluarga 2026 Banner" class="banner" />
+
+    <div class="content">
+      
+      <!-- Form Container -->
+      <div id="formContainer">
+        <h1>Pendaftaran Sosialisasi Bulan Keluarga 2026<br><small>Paroki Katedral Jakarta</small></h1>
+
+        <!-- Announcement Section -->
+        <div class="announcement">
+Syalom Bapak/Ibu Ketua Lingkungan yang terkasih! 🙏💚
+
+Menyambut masa Adven 2026, Kita bersama-sama akan menyiapkan pertemuan lingkungan dengan menjadikan Ekaristi sebagai sumber kekuatan Umat Kristiani 🌏✨
+
+📣 <strong>Sosialisasi Bulan Keluarga 2026</strong>
+Tema: “Ekaristi sebagai sumber kekuatan Umat Kristiani”
+📅 Jumat, 20 November 2026
+🕐 Jam 17:00 - 21:00 WIB
+📍 Grha Pemuda Katedral Jakarta – Lantai 4
+
+Mohon setiap lingkungan mengirimkan minimal 1 atau maksimal 2 orang perwakilan untuk mengikuti kegiatan ini 🙌
+🗓️ Batas pendaftaran: __ November 2026
+
+Jangan lupa membawa alat tulis dan botol minum pribadi 🖊️💧
+
+💜 <strong>Catatan:</strong>
+Pada saat sosialisasi akan dibagikan lilin corona Adven (Bagi yang membeli), dan bawalah biaya penggantinya (Uang PAS) pada saat Acara Sosialisasi Bulan Keluarga ini. 
+
+Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
+        </div>
+
+        <form name="Biodata">
+          <!-- Hidden inputs matching BunSpreadsheet headers -->
+          <input type="hidden" name="sheet_name" value="BunSpreadsheet" />
+
+          <!-- Nested Dropdowns -->
+          <div class="form-group">
+            <label for="wilayahSelect">Wilayah <span class="required">*</span></label>
+            <select id="wilayahSelect" name="Wilayah" required>
+              <option value="">-- Memuat Data Wilayah... --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="lingkSelect">Lingkungan <span class="required">*</span></label>
+            <select id="lingkSelect" name="Lingkungan" disabled required>
+              <option value="">-- Pilih Wilayah Terlebih Dahulu --</option>
+            </select>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Peserta 1 -->
+          <div class="form-group">
+            <label for="nama1">Nama Peserta 1 <span class="required">*</span></label>
+            <input type="text" id="nama1" name="Nama Peserta 1" placeholder="Masukkan nama peserta 1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="hp1">No. HP/WA Peserta 1 <span class="required">*</span></label>
+            <input type="text" id="hp1" name="No. HP/WA Peserta 1" placeholder="Contoh: 081234567890" pattern="^08\d{7,11}$" title="Format nomor HP harus diawali 08 dan berjumlah 9-13 digit angka" required />
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Peserta 2 (Optional) -->
+          <div class="form-group">
+            <label for="nama2">Nama Peserta 2 <span class="optional">(Opsional)</span></label>
+            <input type="text" id="nama2" name="Nama Peserta 2" placeholder="Masukkan nama peserta 2" />
+          </div>
+
+          <div class="form-group">
+            <label for="hp2">No. HP/WA Peserta 2 <span id="labelHp2Req" class="optional">(Opsional)</span></label>
+            <input type="text" id="hp2" name="No. HP/WA Peserta 2" placeholder="Contoh: 081234567890" pattern="^08\d{7,11}$" title="Format nomor HP harus diawali 08 dan berjumlah 9-13 digit angka" />
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Email (Optional) -->
+          <div class="form-group">
+            <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan bukti isian)</span></label>
+            <input type="email" id="email" name="email" placeholder="contoh@email.com" autocomplete="email" />
+          </div>
+
+          <!-- Honeypot Field -->
+          <input type="text" name="mobile_number" style="display:none !important;" tabindex="-1" autocomplete="off" />
+
+          <button type="submit" id="submitBtn" class="btn-submit">Submit Pendaftaran</button>
+        </form>
+      </div>
+
+      <!-- Thank You Screen -->
+      <div id="thankYouContainer" class="thank-you-card hidden">
+        <h2>🎉 Terima Kasih!</h2>
+        <p>Pendaftaran Anda untuk Sosialisasi Bulan Keluarga 2026 telah berhasil disimpan.</p>
+
+        <div class="summary-box">
+          <div class="summary-item"><strong>Wilayah:</strong> <span id="resWilayah"></span></div>
+          <div class="summary-item"><strong>Lingkungan:</strong> <span id="resLingk"></span></div>
+          <div class="summary-item"><strong>Peserta 1:</strong> <span id="resNama1"></span> (<span id="resHp1"></span>)</div>
+          <div class="summary-item" id="resPeserta2Row"><strong>Peserta 2:</strong> <span id="resNama2"></span> (<span id="resHp2"></span>)</div>
+          <div class="summary-item" id="resEmailRow"><strong>Email Confirmation:</strong> <span id="resEmail"></span></div>
+          <div class="summary-item"><strong>Waktu Pendaftaran:</strong> <span id="resTime"></span></div>
+        </div>
+
+        <button type="button" class="btn-submit" onclick="resetForm()">Daftarkan Lingkungan Lain</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // --- 1. JSONP Dropdown Data Loader ---
+    const sheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
+    const sheetName = "wildanlingk";
+    let sheetData = [];
+
+    window.googleSheetHandler = function (data) {
+      // .slice(1) skips Row 1 (Header row)
+      const rows = data.table.rows.slice(1);
+
+      sheetData = rows.map(row => {
+        const wilayah = (row.c && row.c[0] && row.c[0].v !== null) ? row.c[0].v.toString().trim() : "";
+        const lingk = [];
+        for (let i = 1; i <= 4; i++) {
+          if (row.c && row.c[i] && row.c[i].v !== null && row.c[i].v !== undefined) {
+            const v = row.c[i].v.toString().trim();
+            if (v) lingk.push(v);
+          }
+        }
+        return { wilayah, lingk };
+      }).filter(item => item.wilayah !== "");
+
+      populateWilayahDropdown();
+    };
+
+    function populateWilayahDropdown() {
+      const wSel = document.getElementById("wilayahSelect");
+      wSel.innerHTML = '<option value="">-- Pilih Wilayah --</option>';
+
+      sheetData.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item.wilayah;
+        opt.textContent = item.wilayah;
+        wSel.appendChild(opt);
+      });
+    }
+
+    // Dynamic update for Lingkungan dropdown when Wilayah is chosen
+    document.getElementById("wilayahSelect").addEventListener("change", function () {
+      const selectedWilayah = this.value;
+      const lSel = document.getElementById("lingkSelect");
+      lSel.innerHTML = '<option value="">-- Pilih Lingkungan --</option>';
+
+      if (!selectedWilayah) {
+        lSel.disabled = true;
+        return;
+      }
+
+      const match = sheetData.find(item => item.wilayah === selectedWilayah);
+
+      if (match && match.lingk.length > 0) {
+        match.lingk.forEach(lingkVal => {
+          const opt = document.createElement("option");
+          opt.value = lingkVal;
+          opt.textContent = lingkVal;
+          lSel.appendChild(opt);
+        });
+        lSel.disabled = false;
+      } else {
+        lSel.disabled = true;
+      }
+    });
+
+    // Inject JSONP script tag
+    const script = document.createElement("script");
+    script.src = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=responseHandler:googleSheetHandler&sheet=${encodeURIComponent(sheetName)}`;
+    document.body.appendChild(script);
+
+    // --- 2. Dynamic Validation for Peserta 2 ---
+    const nama2Input = document.getElementById('nama2');
+    const hp2Input = document.getElementById('hp2');
+    const labelHp2Req = document.getElementById('labelHp2Req');
+
+    nama2Input.addEventListener('input', function() {
+      if (this.value.trim() !== '') {
+        hp2Input.required = true;
+        labelHp2Req.innerHTML = '<span class="required">*</span>';
+      } else {
+        hp2Input.required = false;
+        labelHp2Req.innerHTML = '<span class="optional">(Opsional)</span>';
+      }
+    });
+
+    // --- 3. Google Apps Script Form Submission ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby_B-RuEcSvBo2Oo9HiNpFKm59BvBBk2slqZw68bp0-LDtsEFH5Hdq6JVABUkwiRB9u/exec';
+    const form = document.forms['Biodata'];
+    const submitBtn = document.getElementById('submitBtn');
+    const formContainer = document.getElementById('formContainer');
+    const thankYouContainer = document.getElementById('thankYouContainer');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Mengirim Data...';
+
+      const formData = new FormData(form);
+      const data = new URLSearchParams(formData);
+
+	fetch(scriptURL, { 
+        method: 'POST', 
+        body: data 
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.result === 'success') {
+          // Display Summary Details
+          document.getElementById('resWilayah').textContent = formData.get('Wilayah');
+          document.getElementById('resLingk').textContent = formData.get('Lingkungan');
+          document.getElementById('resNama1').textContent = formData.get('Nama Peserta 1');
+          document.getElementById('resHp1').textContent = formData.get('No. HP/WA Peserta 1');
+
+          const nama2 = formData.get('Nama Peserta 2');
+          const hp2 = formData.get('No. HP/WA Peserta 2');
+          const resPeserta2Row = document.getElementById('resPeserta2Row');
+          if (nama2) {
+            document.getElementById('resNama2').textContent = nama2;
+            document.getElementById('resHp2').textContent = hp2;
+            resPeserta2Row.classList.remove('hidden');
+          } else {
+            resPeserta2Row.classList.add('hidden');
+          }
+
+          const emailVal = formData.get('email');
+          const resEmailRow = document.getElementById('resEmailRow');
+          if (emailVal) {
+            document.getElementById('resEmail').textContent = emailVal;
+            resEmailRow.classList.remove('hidden');
+          } else {
+            resEmailRow.classList.add('hidden');
+          }
+
+          document.getElementById('resTime').textContent = new Date().toLocaleString('id-ID');
+
+          formContainer.classList.add('hidden');
+          thankYouContainer.classList.remove('hidden');
+          form.reset();
+          document.getElementById('lingkSelect').disabled = true;
+
+        } else if (response.result === 'duplicate') {
+          // Alert user if Lingkungan is already registered
+          alert('⚠️ Pendaftaran Ditolak: ' + response.message);
+
+        } else {
+          alert('Error: ' + (response.error || 'Gagal menyimpan data'));
+        }
+      })
+      .catch(error => {
+        console.error('Error!', error.message);
+        alert('Gagal terhubung ke server. Periksa koneksi internet Anda.');
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Pendaftaran';
+      });
+    });
+
+    function resetForm() {
+      thankYouContainer.classList.add('hidden');
+      formContainer.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
