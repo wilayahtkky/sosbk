@@ -43,7 +43,7 @@ function sendUserConfirmationEmail(userEmail, data) {
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
       <h2 style="color: #2d6a4f;">Bukti Pendaftaran Sosialisasi Bulan Keluarga 2026</h2>
-      <p>Syalom, terima kasih telah melakukan pendaftaran. Berikut adalah rincian data yang telah dikirimkan:</p>
+      <p>Syalom, terima kasih telah melakukan pendaftaran Sosialisasi Bulan Keluarga. Berikut adalah rincian data yang telah dikirimkan:</p>
       
       <ul style="background-color: #f8f9fa; padding: 15px 25px; border-radius: 6px; list-style-type: none;">
         <li><strong>Wilayah:</strong> ${data['Wilayah']}</li>
@@ -58,7 +58,8 @@ function sendUserConfirmationEmail(userEmail, data) {
       🕐 Jam 17:00 - 21:00 WIB<br>
       📍 Grha Pemuda Katedral Jakarta – Lantai 4</p>
 
-      <p><em>Mohon membawa alat tulis dan botol minum pribadi, serta uang pas untuk pengganti lilin corona Adven (bagi yang membeli).</em></p>
+      <p><em>Mohon membawa alat tulis dan botol minum pribadi, serta uang pas untuk pengganti lilin corona Adven.</em></p>
+      <p><b>Contact person:</b> Santi 08-5959-8877-12 / Buntoro 0823-1151-4658 </p>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
       <p style="font-size: 12px; color: #777;">Email ini dikirim secara otomatis. Mohon tidak membalas email ini.</p>
@@ -75,7 +76,15 @@ function sendUserConfirmationEmail(userEmail, data) {
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  // Coba dapatkan kunci dalam waktu maksimal 10 detik (10000 ms)
+  const success = lock.tryLock(10000);
+
+  // Jika gagal mendapatkan kunci karena server sibuk (antrian penuh > 10 detik)
+  if (!success) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ result: 'error', message: 'Server sedang sibuk, silakan coba beberapa saat lagi.' })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
 
   try {
     // Bot honeypot check
@@ -84,7 +93,7 @@ function doPost(e) {
         JSON.stringify({ result: 'success', message: 'Bot detected' })
       ).setMimeType(ContentService.MimeType.JSON);
     }
-
+  
     const doc = SpreadsheetApp.openById(scriptProp.getProperty('key'));
     let sheet = doc.getSheetByName(e.parameter.sheet_name || 'BunSpreadsheet');
     if (!sheet) {
