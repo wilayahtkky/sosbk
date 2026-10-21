@@ -234,7 +234,7 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
     const formContainer = document.getElementById('formContainer');
     const thankYouContainer = document.getElementById('thankYouContainer');
 
-    form.addEventListener('submit', e => {
+	form.addEventListener('submit', e => {
       e.preventDefault();
 
       submitBtn.disabled = true;
@@ -249,7 +249,10 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
           if (response.result === 'success') {
             document.getElementById('resWilayah').textContent = formData.get('Wilayah');
             document.getElementById('resLingk').textContent = formData.get('Lingkungan');
-            document.getElementById('resBeliLilin').textContent = formData.get('Beli Lilin');
+            
+            // Ganti ini: Gunakan jawaban final dari backend jika tersedia
+            document.getElementById('resBeliLilin').textContent = response.finalBeliLilin || formData.get('Beli Lilin');
+            
             document.getElementById('resNama1').textContent = formData.get('Nama Peserta 1');
             document.getElementById('resHp1').textContent = formData.get('No. HP/WA Peserta 1');
 
@@ -280,6 +283,11 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
             form.reset();
             document.getElementById('lingkSelect').disabled = true;
 
+            // Munculkan pop up khusus jika ada warningMessage dari backend
+            if (response.warningMessage) {
+              showCustomModal('⚠️ Info Pembelian Lilin', response.warningMessage);
+            }
+
           } else if (response.result === 'quota_full' || response.result === 'quota_exceeded' || response.result === 'duplicate') {
             showCustomModal('⚠️ Batas Pendaftaran', response.message);
           } else {
@@ -295,7 +303,7 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
           submitBtn.textContent = 'Submit Pendaftaran';
         });
     });
-
+	
     function resetForm() {
       thankYouContainer.classList.add('hidden');
       formContainer.classList.remove('hidden');

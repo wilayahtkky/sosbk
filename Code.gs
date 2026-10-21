@@ -153,20 +153,24 @@ function doPost(e) {
         sheet.getRange(existingRowIndex, colIndex.nama2).setNumberFormat('@').setValue(sanitizeValue(newNama1));
         sheet.getRange(existingRowIndex, colIndex.hp2).setNumberFormat('@').setValue(sanitizeValue(newHp1));
         
-        // --- LOGIKA LILIN ADVEN YANG DIREVISI ---
+        let finalBeliLilin = newBeliLilin;
+        let warningMsg = "";
+
         if (colIndex.beliLilin > 0) {
           const curBeliLilin = sheet.getRange(existingRowIndex, colIndex.beliLilin).getValue().toString().trim();
           
-          // Hanya timpa data Beli Lilin jika data saat ini BUKAN "Ya"
-          // Jika sebelumnya "Ya", maka biarkan "Ya" (meskipun peserta 2 memilih "Tidak")
-          if (curBeliLilin !== 'Ya' && newBeliLilin !== '') {
+          if (curBeliLilin === 'Ya') {
+            finalBeliLilin = 'Ya';
+            if (newBeliLilin === 'Tidak') {
+              warningMsg = "Orang lingkungan anda yang sudah mendaftar membeli lilin, jika lingkungan mau membatalkan, hubungi panitia.";
+            }
+          } else if (newBeliLilin !== '') {
             sheet.getRange(existingRowIndex, colIndex.beliLilin).setValue(sanitizeValue(newBeliLilin));
+            finalBeliLilin = newBeliLilin;
           }
           
-          // Opsional: Untuk email konfirmasi peserta 2, pastikan datanya sesuai hasil akhir
-          e.parameter['Beli Lilin'] = (curBeliLilin === 'Ya') ? 'Ya' : newBeliLilin;
+          e.parameter['Beli Lilin'] = finalBeliLilin;
         }
-        // ----------------------------------------
 
         const newEmail = (e.parameter.email || e.parameter.Email || '').trim();
         if (newEmail !== '' && colIndex.email > 0) {
@@ -180,7 +184,13 @@ function doPost(e) {
         }
 
         return ContentService.createTextOutput(
-          JSON.stringify({ result: 'success', row: existingRowIndex, isSecondary: true })
+          JSON.stringify({ 
+            result: 'success', 
+            row: existingRowIndex, 
+            isSecondary: true,
+            finalBeliLilin: finalBeliLilin,
+            warningMessage: warningMsg
+          })
         ).setMimeType(ContentService.MimeType.JSON);
       }
     }
@@ -205,7 +215,12 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(
-      JSON.stringify({ result: 'success', row: nextRow, isSecondary: false })
+      JSON.stringify({ 
+        result: 'success', 
+        row: nextRow, 
+        isSecondary: false,
+        finalBeliLilin: newBeliLilin
+      })
     ).setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
@@ -217,7 +232,6 @@ function doPost(e) {
   }
 }
 
-// Fungsi doGet() untuk laporan pivot table tetap sama...
 function doGet(e) {
   try {
     const doc = SpreadsheetApp.openById(scriptProp.getProperty('key'));
