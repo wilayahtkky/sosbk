@@ -244,10 +244,13 @@ function doGet(e) {
       return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
     }
     const headers = data[0].map(h => h.toString().trim().toLowerCase());
+    
     const idxWilayah = headers.indexOf('wilayah');
     const idxLingk = headers.indexOf('lingkungan');
     const idxNama1 = headers.indexOf('nama peserta 1');
     const idxNama2 = headers.indexOf('nama peserta 2');
+    const idxBeliLilin = headers.indexOf('beli lilin'); // Tambahan kolom lilin
+    
     const result = [];
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
@@ -255,8 +258,16 @@ function doGet(e) {
       const lVal = idxLingk !== -1 && row[idxLingk] ? row[idxLingk].toString().trim() : '';
       const p1Val = idxNama1 !== -1 && row[idxNama1] ? row[idxNama1].toString().trim() : '';
       const p2Val = idxNama2 !== -1 && row[idxNama2] ? row[idxNama2].toString().trim() : '';
+      const lilinVal = idxBeliLilin !== -1 && row[idxBeliLilin] ? row[idxBeliLilin].toString().trim() : ''; // Ekstrak data lilin
+      
       if (wVal && lVal) {
-        result.push({ wilayah: wVal, lingkungan: lVal, nama1: p1Val, nama2: p2Val });
+        result.push({ 
+          wilayah: wVal, 
+          lingkungan: lVal, 
+          nama1: p1Val, 
+          nama2: p2Val,
+          beliLilin: lilinVal // Kirim data lilin ke frontend
+        });
       }
     }
     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);

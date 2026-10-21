@@ -62,6 +62,27 @@
       white-space: nowrap;
     }
 
+    .lilin-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .lilin-ya {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .lilin-tidak {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
     .participant-line {
       display: block;
       line-height: 1.4;
@@ -74,7 +95,7 @@
 
     .participant-line.p2 {
       color: #2b2b2b;
-	  font-weight: bold;
+      font-weight: bold;
       font-size: 13px;
       margin-top: 4px;
       padding-top: 4px;
@@ -131,16 +152,12 @@
   </div>
 
   <script>
-    // Public Master reference structure sheet
     const masterSheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
-    
-    // Private Sheet Web App Endpoint (Apps Script Exec URL)
     const scriptAppUrl = "https://script.google.com/macros/s/AKfycby_B-RuEcSvBo2Oo9HiNpFKm59BvBBk2slqZw68bp0-LDtsEFH5Hdq6JVABUkwiRB9u/exec";
 
     let masterStructure = [];
     let registeredData = {};
 
-    // 1. Load Wilayah & Lingkungan matrix from public reference sheet
     window.handleWildanLingk = function(data) {
       if (!data.table || !data.table.rows) return;
 
@@ -160,7 +177,6 @@
       loadPrivateSubmissions();
     };
 
-    // 2. Fetch participant names securely via Google Apps Script doGet()
     async function loadPrivateSubmissions() {
       try {
         const response = await fetch(scriptAppUrl);
@@ -172,7 +188,8 @@
               const key = `${item.wilayah.toLowerCase()}|${item.lingkungan.toLowerCase()}`;
               registeredData[key] = {
                 p1: item.nama1 || "",
-                p2: item.nama2 || ""
+                p2: item.nama2 || "",
+                lilin: item.beliLilin || "" // Menyimpan data lilin
               };
             }
           });
@@ -184,7 +201,6 @@
       renderPivotTable();
     }
 
-    // 3. Render Pivot Table
     function renderPivotTable() {
       const statusBox = document.getElementById("statusBox");
       const pivotTable = document.getElementById("pivotTable");
@@ -210,6 +226,14 @@
 
             if (match && (match.p1 || match.p2)) {
               let cellContent = `<strong style="font-size:11px; color:#2d6a4f; display:block; margin-bottom:4px;">${lingkName}</strong>`;
+              
+              // Menampilkan label lilin
+              if (match.lilin === 'Ya') {
+                cellContent += `<span class="lilin-badge lilin-ya">🕯️ Lilin: Ya</span>`;
+              } else if (match.lilin === 'Tidak') {
+                cellContent += `<span class="lilin-badge lilin-tidak">Lilin: Tidak</span>`;
+              }
+
               if (match.p1) {
                 cellContent += `<span class="participant-line p1">1. ${match.p1}</span>`;
               }
@@ -234,7 +258,6 @@
       pivotTable.classList.remove("hidden");
     }
 
-    // Start script
     const scriptMaster = document.createElement("script");
     scriptMaster.src = `https://docs.google.com/spreadsheets/d/${masterSheetID}/gviz/tq?tqx=responseHandler:handleWildanLingk&sheet=wildanlingk`;
     document.body.appendChild(scriptMaster);
