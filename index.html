@@ -13,16 +13,13 @@
 <body>	
 
   <div class="container">
-    <!-- Banner Image -->
     <img src="BulanKeluarga2026.JPG" alt="Bulan Keluarga 2026 Banner" class="banner" />
 
     <div class="content">
       
-      <!-- Form Container -->
       <div id="formContainer">
         <h1>Pendaftaran Sosialisasi Bulan Keluarga 2026<br><small>Paroki Katedral Jakarta</small></h1>
 
-        <!-- Announcement Section -->
         <div class="announcement">
 Syalom Bapak/Ibu Ketua Lingkungan yang terkasih! 🙏💚
 
@@ -47,10 +44,8 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
         </div>
 
         <form name="Biodata">
-          <!-- Hidden inputs matching BunSpreadsheet headers -->
           <input type="hidden" name="sheet_name" value="BunSpreadsheet" />
 
-          <!-- Nested Dropdowns -->
           <div class="form-group">
             <label for="wilayahSelect">Wilayah <span class="required">*</span></label>
             <select id="wilayahSelect" name="Wilayah" required>
@@ -66,8 +61,19 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
           </div>
 
           <div class="section-divider"></div>
+          
+          <!-- Tambahan Pertanyaan Lilin Adven -->
+          <div class="form-group">
+            <label for="beliLilin">Apakah Lingkungan Anda mau membeli Lilin Adven? <span class="required">*</span></label>
+            <select id="beliLilin" name="Beli Lilin" required>
+              <option value="">-- Pilih Jawaban --</option>
+              <option value="Ya">Ya</option>
+              <option value="Tidak">Tidak</option>
+            </select>
+          </div>
 
-          <!-- Peserta 1 -->
+          <div class="section-divider"></div>
+
           <div class="form-group">
             <label for="nama1">Nama Peserta 1 <span class="required">*</span></label>
             <input type="text" id="nama1" name="Nama Peserta 1" placeholder="Masukkan nama peserta 1" required />
@@ -80,7 +86,6 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
 
           <div class="section-divider"></div>
 
-          <!-- Peserta 2 (Optional) -->
           <div class="form-group">
             <label for="nama2">Nama Peserta 2 <span class="optional">(Opsional)</span></label>
             <input type="text" id="nama2" name="Nama Peserta 2" placeholder="Masukkan nama peserta 2" />
@@ -93,13 +98,11 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
 
           <div class="section-divider"></div>
 
-          <!-- Email (Optional) -->
           <div class="form-group">
             <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan salinan isian Form ini)</span></label>
             <input type="email" id="email" name="email" placeholder="contoh@email.com" autocomplete="email" />
           </div>
 
-          <!-- Honeypot Field -->
           <input type="text" name="mobile_number" style="display:none !important;" tabindex="-1" autocomplete="off" />
 
           <button type="submit" id="submitBtn" class="btn-submit">Submit Pendaftaran</button>
@@ -114,6 +117,7 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
         <div class="summary-box">
           <div class="summary-item"><strong>Wilayah:</strong> <span id="resWilayah"></span></div>
           <div class="summary-item"><strong>Lingkungan:</strong> <span id="resLingk"></span></div>
+          <div class="summary-item"><strong>Beli Lilin Adven:</strong> <span id="resBeliLilin"></span></div>
           <div class="summary-item"><strong>Peserta 1:</strong> <span id="resNama1"></span> (<span id="resHp1"></span>)</div>
           <div class="summary-item" id="resPeserta2Row"><strong>Peserta 2:</strong> <span id="resNama2"></span> (<span id="resHp2"></span>)</div>
           <div class="summary-item" id="resEmailRow"><strong>Email Confirmation:</strong> <span id="resEmail"></span></div>
@@ -126,16 +130,34 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
     </div>
   </div>
 
+  <!-- Custom Modal HTML -->
+  <div id="customModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="modalTitle">Pemberitahuan</h3>
+      <p id="modalMessage"></p>
+      <button type="button" class="btn-submit" onclick="closeCustomModal()">OK</button>
+    </div>
+  </div>
+
   <script>
+    // --- Custom Modal Helper Functions ---
+    function showCustomModal(title, message) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('customModal').classList.remove('hidden');
+    }
+
+    function closeCustomModal() {
+      document.getElementById('customModal').classList.add('hidden');
+    }
+
     // --- 1. JSONP Dropdown Data Loader ---
     const sheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
     const sheetName = "wildanlingk";
     let sheetData = [];
 
     window.googleSheetHandler = function (data) {
-      // .slice(1) skips Row 1 (Header row)
       const rows = data.table.rows.slice(1);
-
       sheetData = rows.map(row => {
         const wilayah = (row.c && row.c[0] && row.c[0].v !== null) ? row.c[0].v.toString().trim() : "";
         const lingk = [];
@@ -154,7 +176,6 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
     function populateWilayahDropdown() {
       const wSel = document.getElementById("wilayahSelect");
       wSel.innerHTML = '<option value="">-- Pilih Wilayah --</option>';
-
       sheetData.forEach(item => {
         const opt = document.createElement("option");
         opt.value = item.wilayah;
@@ -163,7 +184,6 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
       });
     }
 
-    // Dynamic update for Lingkungan dropdown when Wilayah is chosen
     document.getElementById("wilayahSelect").addEventListener("change", function () {
       const selectedWilayah = this.value;
       const lSel = document.getElementById("lingkSelect");
@@ -175,7 +195,6 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
       }
 
       const match = sheetData.find(item => item.wilayah === selectedWilayah);
-
       if (match && match.lingk.length > 0) {
         match.lingk.forEach(lingkVal => {
           const opt = document.createElement("option");
@@ -189,7 +208,6 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
       }
     });
 
-    // Inject JSONP script tag
     const script = document.createElement("script");
     script.src = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=responseHandler:googleSheetHandler&sheet=${encodeURIComponent(sheetName)}`;
     document.body.appendChild(script);
@@ -225,57 +243,57 @@ Sampai ketemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻
       const formData = new FormData(form);
       const data = new URLSearchParams(formData);
 
-fetch(scriptURL, { 
-        method: 'POST', 
-        body: data 
-      })
-      .then(response => response.json())
-      .then(response => {
-        if (response.result === 'success') {
-          // Display Summary Details
-          document.getElementById('resWilayah').textContent = formData.get('Wilayah');
-          document.getElementById('resLingk').textContent = formData.get('Lingkungan');
-          document.getElementById('resNama1').textContent = formData.get('Nama Peserta 1');
-          document.getElementById('resHp1').textContent = formData.get('No. HP/WA Peserta 1');
+      fetch(scriptURL, { method: 'POST', body: data })
+        .then(response => response.json())
+        .then(response => {
+          if (response.result === 'success') {
+            document.getElementById('resWilayah').textContent = formData.get('Wilayah');
+            document.getElementById('resLingk').textContent = formData.get('Lingkungan');
+            document.getElementById('resBeliLilin').textContent = formData.get('Beli Lilin');
+            document.getElementById('resNama1').textContent = formData.get('Nama Peserta 1');
+            document.getElementById('resHp1').textContent = formData.get('No. HP/WA Peserta 1');
 
-          const nama2 = formData.get('Nama Peserta 2');
-          const hp2 = formData.get('No. HP/WA Peserta 2');
-          const resPeserta2Row = document.getElementById('resPeserta2Row');
-          if (nama2) {
-            document.getElementById('resNama2').textContent = nama2;
-            document.getElementById('resHp2').textContent = hp2;
-            resPeserta2Row.classList.remove('hidden');
+            const nama2 = formData.get('Nama Peserta 2');
+            const hp2 = formData.get('No. HP/WA Peserta 2');
+            const resPeserta2Row = document.getElementById('resPeserta2Row');
+            if (nama2) {
+              document.getElementById('resNama2').textContent = nama2;
+              document.getElementById('resHp2').textContent = hp2;
+              resPeserta2Row.classList.remove('hidden');
+            } else {
+              resPeserta2Row.classList.add('hidden');
+            }
+
+            const emailVal = formData.get('email');
+            const resEmailRow = document.getElementById('resEmailRow');
+            if (emailVal) {
+              document.getElementById('resEmail').textContent = emailVal;
+              resEmailRow.classList.remove('hidden');
+            } else {
+              resEmailRow.classList.add('hidden');
+            }
+
+            document.getElementById('resTime').textContent = new Date().toLocaleString('id-ID');
+
+            formContainer.classList.add('hidden');
+            thankYouContainer.classList.remove('hidden');
+            form.reset();
+            document.getElementById('lingkSelect').disabled = true;
+
+          } else if (response.result === 'quota_full' || response.result === 'quota_exceeded' || response.result === 'duplicate') {
+            showCustomModal('⚠️ Batas Pendaftaran', response.message);
           } else {
-            resPeserta2Row.classList.add('hidden');
+            showCustomModal('❌ Terjadi Kesalahan', response.error || response.message || 'Gagal menyimpan data');
           }
-
-          const emailVal = formData.get('email');
-          const resEmailRow = document.getElementById('resEmailRow');
-          if (emailVal) {
-            document.getElementById('resEmail').textContent = emailVal;
-            resEmailRow.classList.remove('hidden');
-          } else {
-            resEmailRow.classList.add('hidden');
-          }
-
-          document.getElementById('resTime').textContent = new Date().toLocaleString('id-ID');
-
-          formContainer.classList.add('hidden');
-          thankYouContainer.classList.remove('hidden');
-          form.reset();
-          document.getElementById('lingkSelect').disabled = true;
-
-        } else if (response.result === 'quota_full' || response.result === 'quota_exceeded' || response.result === 'duplicate') {
-          alert('⚠️ Batas Pendaftaran: ' + response.message);
-
-        } else {
-          alert('Error: ' + (response.error || 'Gagal menyimpan data'));
-        }
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Pendaftaran';
-      });
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          showCustomModal('🌐 Gangguan Koneksi', 'Gagal terhubung ke server. Periksa koneksi internet Anda.');
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Pendaftaran';
+        });
     });
 
     function resetForm() {
