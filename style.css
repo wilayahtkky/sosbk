@@ -154,6 +154,16 @@ select:disabled {
 .summary-item strong {
   color: #1b4332;
 }
+
+/* Footer */
+.form-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #003e64;
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
 /* --- Custom Modal CSS --- */
 .modal-overlay {
   position: fixed;
