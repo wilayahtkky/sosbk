@@ -170,6 +170,29 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! ðŸ‘‹ðŸ
       document.getElementById('customModal').classList.add('hidden');
     }
 
+// --- Auto-Disable Button Deadline Check (13 Nov 2026, 11:59 WIB) ---
+    const DEADLINE = new Date("2026-10-27T17:26:59+07:00");
+
+    function isPastDeadline() {
+      return new Date() >= DEADLINE;
+    }
+
+    function applyDeadlineCheck() {
+      const submitBtn = document.getElementById('submitBtn');
+      if (isPastDeadline()) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Pendaftaran Sudah Ditutup';
+        submitBtn.style.backgroundColor = '#6c757d';
+        submitBtn.style.cursor = 'not-allowed';
+        return true;
+      }
+      return false;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      applyDeadlineCheck();
+    });
+	  
     // --- 1. JSONP Dropdown Data Loader ---
     const sheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
     const sheetName = "wildanlingk";
