@@ -100,19 +100,11 @@ select:disabled {
   margin: 24px 0 18px 0;
 }
 
-/* --- Perbaikan Tombol Submit 3D Eye-Catching --- */
+/* --- Perbaikan Tombol Submit 3D Warna Biru --- */
 
-/* Note: Pastikan selector perbaikan universal di paling atas berupa * bukan - */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Ganti style .btn-submit lama dengan style di bawah ini */
 .btn-submit {
   width: 100%;
-  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  background: linear-gradient(135deg, #5895bb 0%, #003e64 100%);
   color: #ffffff;
   padding: 16px 24px;
   font-size: 18px;
@@ -125,35 +117,34 @@ select:disabled {
   margin-top: 15px;
   position: relative;
   
-  /* Efek Bayangan 3D Tebal */
-  box-shadow: 0 6px 0 #0d2318, 
+  /* Bayangan Tebal 3D (Warna Biru Gelap) */
+  box-shadow: 0 6px 0 #002238, 
               0 10px 15px rgba(0, 0, 0, 0.25);
   
-  /* Transisi halus saat ditekan/di-hover */
   transition: all 0.15s ease-in-out;
   transform: translateY(0);
   outline: none;
 }
 
-/* Efek Hover (Tombol sedikit terangkat) */
+/* Hover (Tombol sedikit naik) */
 .btn-submit:hover {
-  background: linear-gradient(135deg, #378563 0%, #204e3b 100%);
-  box-shadow: 0 8px 0 #0d2318, 
+  background: linear-gradient(135deg, #6ba7cc 0%, #004f7c 100%);
+  box-shadow: 0 8px 0 #002238, 
               0 14px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
 
-/* Efek Active / Klik (Tombol benar-benar tertekan ke bawah) */
+/* Active / Klik (Efek menekan tombol fisik) */
 .btn-submit:active {
-  box-shadow: 0 2px 0 #0d2318, 
+  box-shadow: 0 2px 0 #002238, 
               0 4px 6px rgba(0, 0, 0, 0.2);
   transform: translateY(4px);
 }
 
-/* Tampilan Tombol saat Non-Aktif (Disabled) */
+/* Non-Aktif (Disabled) */
 .btn-submit:disabled {
-  background: #a5d6a7;
-  box-shadow: 0 4px 0 #76a078;
+  background: #a0c4de;
+  box-shadow: 0 4px 0 #7094ad;
   color: #ffffff;
   cursor: not-allowed;
   transform: translateY(0);
