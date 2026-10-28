@@ -133,7 +133,7 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! ğŸ‘‹ğŸ
           <div class="summary-item"><strong>Waktu Pendaftaran:</strong> <span id="resTime"></span></div>
         </div>
 
-        <button type="button" class="btn-submit" onclick="resetForm()">Daftarkan Lingkungan Lain</button>
+        <button type="button" class="btn-submit" onclick="closeWindow()">TUTUP</button>
       </div>
 
     </div>
@@ -346,9 +346,17 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! ğŸ‘‹ğŸ
         });
     });
 	
-    function resetForm() {
-      thankYouContainer.classList.add('hidden');
-      formContainer.classList.remove('hidden');
+// --- 4. Fungsi Tutup Halaman ---
+    function closeWindow() {
+      // 1. Coba tutup tab/jendela
+      window.close();
+
+      // 2. Fallback jika tab dibuka langsung dari link biasa (security browser memblokir window.close)
+      setTimeout(function () {
+        if (!window.closed) {
+          window.location.href = "about:blank";
+        }
+      }, 300);
     }
   </script>
 </body>
