@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peserta SosBK 2026</title>
+  <link rel="stylesheet" href="stylesosbk.css" />
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Christmas Header -->
+    <header class="app-header">
+      <div class="header-ornament" aria-hidden="true">&#10052; &#127876; &#10052;</div>
+      <h1>Peserta SosBK 2026</h1>
+      <p class="subtitle">Click/Tap to open Wilayah &amp; Lingkungan</p>
+    </header>
+
+    <!-- Login Section -->
+    <section id="loginSection" class="card login-card">
+      <h2>Login Akses Data</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Masukkan username" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Masukkan password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn-primary" id="loginBtn">Masuk</button>
+        <p id="loginError" class="error-msg"></p>
+      </form>
+    </section>
+
+    <!-- Main Data Section -->
+    <main id="mainSection" class="hidden">
+      <!-- Search / Filter Box -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Cari nama peserta, lingkungan, atau wilayah..." />
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingIndicator" class="loading-box hidden">
+        <div class="spinner"></div>
+        <p id="loadingText">Memuat data peserta...</p>
+      </div>
+
+      <!-- Outer Accordion Container (Wilayah) -->
+      <div id="accordionContainer" class="accordion-list"></div>
+
+      <!-- Footer with Secret Trigger & Hidden Sync Button -->
+      <footer class="app-footer">
+        <p class="footer-note" id="secretTrigger" title="Tap 3x untuk opsi admin">
+          &#10022; &copy; 2026 Panitia SosBK &bull; Data Peserta &#10022;
+        </p>
+
+        <div id="adminControls" class="admin-controls hidden">
+          <button type="button" id="syncBtn" class="btn-sync">
+            &#8635; Refresh &amp; Copy dari Source
+          </button>
+          <button type="button" id="logoutBtn" class="btn-logout">
+            Keluar
+          </button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // ==========================================
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+    // ==========================================
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwXdtpt-X95M4sirDFpuOABXl8bcEm7ZZl0NGNhpWd3g6GW_okClb_NaatBbi0DT8HS/exec";
+
+    // State
+    let authCreds = { user: "", pass: "" };
+    let allParticipants = [];
+    let tapCount = 0;
+    let tapTimer = null;
+
+    // DOM Elements
+    const loginSection = document.getElementById("loginSection");
+    const mainSection = document.getElementById("mainSection");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    const loadingText = document.getElementById("loadingText");
+    const accordionContainer = document.getElementById("accordionContainer");
+    const searchInput = document.getElementById("searchInput");
+    const secretTrigger = document.getElementById("secretTrigger");
+    const adminControls = document.getElementById("adminControls");
+    const syncBtn = document.getElementById("syncBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // Check saved session
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedUser = sessionStorage.getItem("sosbk_user");
+      const savedPass = sessionStorage.getItem("sosbk_pass");
+      if (savedUser && savedPass) {
+        authCreds = { user: savedUser, pass: savedPass };
+        showMainAndFetch(false);
+      }
+    });
+
+    // Handle Login Submit
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.textContent = "";
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      authCreds = { user, pass };
+      await showMainAndFetch(false);
+    });
+
+    // Fetch Data from GAS
+    async function showMainAndFetch(isSync = false) {
+      loginSection.classList.add("hidden");
+      mainSection.classList.remove("hidden");
+      accordionContainer.innerHTML = "";
+      loadingIndicator.classList.remove("hidden");
+      loadingText.textContent = isSync
+        ? "Menyalin data terbaru dari Source Sheet..."
+        : "Memuat data peserta...";
+
+      if (isSync) syncBtn.disabled = true;
+
+      try {
+        const url = new URL(GAS_WEB_APP_URL);
+        url.searchParams.set("user", authCreds.user);
+        url.searchParams.set("pass", authCreds.pass);
+        if (isSync) url.searchParams.set("action", "sync");
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          redirect: "follow"
+        });
+        const result = await response.json();
+
+        if (result.status === "error") {
+          sessionStorage.removeItem("sosbk_user");
+          sessionStorage.removeItem("sosbk_pass");
+          mainSection.classList.add("hidden");
+          loginSection.classList.remove("hidden");
+          loginError.textContent = result.message || "Username atau password salah.";
+          return;
+        }
+
+        sessionStorage.setItem("sosbk_user", authCreds.user);
+        sessionStorage.setItem("sosbk_pass", authCreds.pass);
+
+        allParticipants = result.data || [];
+        renderNestedAccordions(allParticipants, false);
+
+        if (isSync) {
+          alert("Sinkronisasi dari Source Sheet berhasil!");
+        }
+      } catch (err) {
+        accordionContainer.innerHTML = `
+          <div class="empty-state">
+            Gagal terhubung ke server. Pastikan URL Web App &amp; pengaturan deployment sudah benar.
+          </div>`;
+      } finally {
+        loadingIndicator.classList.add("hidden");
+        if (isSync) syncBtn.disabled = false;
+      }
+    }
+
+    // Group by Wilayah (Col A) -> then by Lingkungan (Col B)
+    function renderNestedAccordions(data, autoExpand = false) {
+      accordionContainer.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        accordionContainer.innerHTML = `<div class="empty-state">Tidak ada data peserta ditemukan.</div>`;
+        return;
+      }
+
+      // 1. Group by Wilayah -> Lingkungan
+      const wilayahMap = {};
+      data.forEach(item => {
+        const wKey = item.wilayah || "Tanpa Wilayah";
+        const lKey = item.lingkungan || "Tanpa Lingkungan";
+
+        if (!wilayahMap[wKey]) {
+          wilayahMap[wKey] = { total: 0, lingkunganMap: {} };
+        }
+        if (!wilayahMap[wKey].lingkunganMap[lKey]) {
+          wilayahMap[wKey].lingkunganMap[lKey] = [];
+        }
+
+        wilayahMap[wKey].lingkunganMap[lKey].push(item);
+        wilayahMap[wKey].total++;
+      });
+
+      // Sort Wilayah alphabetically
+      const sortedWilayah = Object.keys(wilayahMap).sort((a, b) => a.localeCompare(b));
+
+      sortedWilayah.forEach(wilayah => {
+        const wGroup = wilayahMap[wilayah];
+
+        // Outer Wilayah Item
+        const wilayahItem = document.createElement("div");
+        wilayahItem.className = "accordion-item wilayah-item" + (autoExpand ? " active" : "");
+
+        const wilayahHeader = document.createElement("button");
+        wilayahHeader.className = "accordion-header wilayah-header";
+        wilayahHeader.type = "button";
+        wilayahHeader.innerHTML = `
+          <span class="wilayah-title">&#127876; ${escapeHtml(wilayah)}</span>
+          <span class="badge-count">${wGroup.total}</span>
+          <span class="chevron">&#9662;</span>
+        `;
+
+        const wilayahPanel = document.createElement("div");
+        wilayahPanel.className = "accordion-panel wilayah-panel";
+
+        const subListContainer = document.createElement("div");
+        subListContainer.className = "sub-accordion-list";
+
+        // Sort Lingkungan alphabetically inside this Wilayah
+        const sortedLingkungan = Object.keys(wGroup.lingkunganMap).sort((a, b) => a.localeCompare(b));
+
+        sortedLingkungan.forEach(lingkungan => {
+          const members = wGroup.lingkunganMap[lingkungan];
+
+          // Inner Lingkungan Item
+          const lingItem = document.createElement("div");
+          lingItem.className = "sub-accordion-item" + (autoExpand ? " active" : "");
+
+          const lingHeader = document.createElement("button");
+          lingHeader.className = "sub-accordion-header";
+          lingHeader.type = "button";
+          lingHeader.innerHTML = `
+            <span class="lingkungan-title">&#10022; ${escapeHtml(lingkungan)}</span>
+            <span class="sub-badge-count">${members.length}</span>
+            <span class="sub-chevron">&#9662;</span>
+          `;
+
+          const lingPanel = document.createElement("div");
+          lingPanel.className = "sub-accordion-panel";
+
+          const membersHtml = members.map(m => {
+            const cleanPhone = m.phone.replace(/[^0-9+]/g, "");
+            const waPhone = cleanPhone.startsWith("0")
+              ? "62" + cleanPhone.substring(1)
+              : cleanPhone;
+
+            const phoneLink = cleanPhone && cleanPhone !== "-"
+              ? `<a href="https://wa.me/${waPhone}" target="_blank" rel="noopener" class="phone-link">${escapeHtml(m.phone)}</a>`
+              : `<span>-</span>`;
+
+            return `
+              <div class="peserta-card">
+                <div class="peserta-row">
+                  <span class="peserta-nama">${escapeHtml(m.nama)}</span>
+                  <span class="peserta-phone">&#128222; ${phoneLink}</span>
+                </div>
+                ${m.keterangan ? `<div class="peserta-ket">${escapeHtml(m.keterangan)}</div>` : ""}
+              </div>
+            `;
+          }).join("");
+
+          lingPanel.innerHTML = `<div class="sub-panel-inner">${membersHtml}</div>`;
+
+          // Toggle Inner Lingkungan Accordion
+          lingHeader.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = lingItem.classList.contains("active");
+            // Close sibling Lingkungan accordions in the same Wilayah
+            subListContainer.querySelectorAll(".sub-accordion-item.active").forEach(el => {
+              if (el !== lingItem) el.classList.remove("active");
+            });
+            lingItem.classList.toggle("active", !isOpen);
+          });
+
+          lingItem.appendChild(lingHeader);
+          lingItem.appendChild(lingPanel);
+          subListContainer.appendChild(lingItem);
+        });
+
+        wilayahPanel.appendChild(subListContainer);
+
+        // Toggle Outer Wilayah Accordion
+        wilayahHeader.addEventListener("click", () => {
+          const isOpen = wilayahItem.classList.contains("active");
+          document.querySelectorAll(".wilayah-item.active").forEach(el => {
+            if (el !== wilayahItem) el.classList.remove("active");
+          });
+          wilayahItem.classList.toggle("active", !isOpen);
+        });
+
+        wilayahItem.appendChild(wilayahHeader);
+        wilayahItem.appendChild(wilayahPanel);
+        accordionContainer.appendChild(wilayahItem);
+      });
+    }
+
+    // Live Search Filter
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderNestedAccordions(allParticipants, false);
+        return;
+      }
+      const filtered = allParticipants.filter(p =>
+        p.wilayah.toLowerCase().includes(q) ||
+        p.lingkungan.toLowerCase().includes(q) ||
+        p.nama.toLowerCase().includes(q) ||
+        p.phone.toLowerCase().includes(q)
+      );
+      renderNestedAccordions(filtered, true);
+    });
+
+    // Hidden Button Reveal: Tap footer text 3 times
+    secretTrigger.addEventListener("click", () => {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 1200);
+
+      if (tapCount >= 3) {
+        adminControls.classList.toggle("hidden");
+        tapCount = 0;
+      }
+    });
+
+    // Refresh / Copy from Source Button
+    syncBtn.addEventListener("click", () => {
+      if (confirm("Salin ulang data terbaru dari BunSpreadsheet (Source) ke Target Sheet?")) {
+        showMainAndFetch(true);
+      }
+    });
+
+    // Logout Button
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.clear();
+      location.reload();
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
