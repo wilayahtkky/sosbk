@@ -4,32 +4,97 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Pendaftaran Sosialisasi Bulan Keluarga 2026 - Paroki Katedral Jakarta</title>
-  <meta name="description" content="Kirim Data ke Google Sheet" />
+  <title>Pendaftaran Ditutup - Sosialisasi Bulan Keluarga 2026 - Paroki Katedral Jakarta</title>
+  <meta name="description" content="Pendaftaran Sosialisasi Bulan Keluarga 2026 Telah Ditutup" />
   <link href="./favicon.png" rel="shortcut icon" />
 
   <!-- Open Graph Meta Tags untuk WhatsApp & Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tkky.my.id/sosbk" />
-  <meta property="og:title" content="Bulan Keluarga 2026" />
-  <meta property="og:description" content="Pendaftaran Sosialisasi Bulan Keluarga 2026" />
+  <meta property="og:title" content="Bulan Keluarga 2026 (Pendaftaran Ditutup)" />
+  <meta property="og:description" content="Pendaftaran Sosialisasi Bulan Keluarga 2026 telah ditutup." />
   <meta property="og:image" content="https://tkky.my.id/sosbk/BulanKeluarga2026.JPG" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
 	
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Style Tambahan untuk Status Pendaftaran Ditutup (Gray Out) -->
+  <style>
+    .closed-notice {
+      background-color: #fff3cd;
+      border: 2px solid #ffc107;
+      border-left: 6px solid #d9534f;
+      color: #664d03;
+      padding: 18px 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .closed-notice h2 {
+      color: #b02a37;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .closed-notice p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    /* Efek Gray Out pada area form & pengumuman */
+    .form-disabled-wrapper {
+      opacity: 0.45;
+      filter: grayscale(100%);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .form-disabled-wrapper input,
+    .form-disabled-wrapper select {
+      background-color: #e9ecef !important;
+      color: #6c757d !important;
+      cursor: not-allowed !important;
+    }
+
+    .btn-closed {
+      background: #6c757d !important;
+      box-shadow: 0 4px 0 #495057 !important;
+      color: #ffffff !important;
+      cursor: not-allowed !important;
+      opacity: 1 !important;
+    }
+  </style>
 </head>
 <body>	
 
   <div class="container">
-    <img src="BulanKeluarga2026.JPG" alt="Bulan Keluarga 2026 Banner" class="banner" />
+    <img src="BulanKeluarga2026.JPG" alt="Bulan Keluarga 2026 Banner" class="banner" style="filter: grayscale(40%);" />
 
     <div class="content">
       
       <div id="formContainer">
         <h1>Pendaftaran Sosialisasi Bulan Keluarga 2026<br><small>Paroki Katedral Jakarta</small></h1>
 
-        <div class="announcement">
+        <!-- Pesan Pendaftaran Ditutup -->
+        <div class="closed-notice" role="alert">
+          <h2>🚫 Pendaftaran Sudah Ditutup</h2>
+          <p>
+            Terima kasih atas antusiasme Bapak/Ibu Ketua Lingkungan.<br>
+            Batas waktu pendaftaran Sosialisasi Bulan Keluarga 2026 telah berakhir pada <strong>Jumat, 13 November 2026</strong> dan formulir ini tidak lagi menerima pengisian data.
+          </p>
+          <p style="margin-top: 10px; font-size: 13px;">
+            Untuk informasi lebih lanjut, silakan hubungi panitia:<br>
+            ☎️ <strong>Santi:</strong> 08-5959-8877-12 | ☎️ <strong>Buntoro:</strong> 0823-1151-4658
+          </p>
+        </div>
+
+        <!-- Area Formulir yang di-Gray Out -->
+        <div class="form-disabled-wrapper" aria-disabled="true">
+          <div class="announcement">
 Syalom Bapak/Ibu Ketua Lingkungan yang terkasih! 🙏💚
 
 Menyambut masa Adven 2026, Kita bersama-sama akan menyiapkan pertemuan lingkungan dengan menjadikan Ekaristi sebagai sumber kekuatan Umat Kristiani 🌏✨
@@ -50,90 +115,69 @@ Pada saat sosialisasi Bulan Keluarga ini akan ada <b>penjualan lilin corona Adve
 
 Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋🏻 <br>
 <p><b>Contact:</p> <p>☎️ Santi</b> 08-5959-8877-12</p><p>☎️<b> Buntoro</b> 0823-1151-4658 </p>          
+          </div>
+
+          <form name="Biodata" onsubmit="return false;">
+            <input type="hidden" name="sheet_name" value="BunSpreadsheet" />
+
+            <div class="form-group">
+              <label for="wilayahSelect">Wilayah <span class="required">*</span></label>
+              <select id="wilayahSelect" name="Wilayah" disabled>
+                <option value="">-- Pendaftaran Ditutup --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="lingkSelect">Lingkungan <span class="required">*</span></label>
+              <select id="lingkSelect" name="Lingkungan" disabled>
+                <option value="">-- Pendaftaran Ditutup --</option>
+              </select>
+            </div>
+
+            <div class="section-divider"></div>
+            
+            <!-- Tambahan Pertanyaan Lilin Adven -->
+            <div class="form-group">
+              <label for="beliLilin">Apakah Lingkungan Anda mau membeli Lilin Adven? <span class="required">*</span></label>
+              <select id="beliLilin" name="Beli Lilin" disabled>
+                <option value="">-- Pendaftaran Ditutup --</option>
+              </select>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="form-group">
+              <label for="nama1">Nama Peserta 1 <span class="required">*</span></label>
+              <input type="text" id="nama1" name="Nama Peserta 1" placeholder="Pendaftaran sudah ditutup" disabled />
+            </div>
+
+            <div class="form-group">
+              <label for="hp1">No. HP/WA Peserta 1 <span class="required">*</span></label>
+              <input type="text" id="hp1" name="No. HP/WA Peserta 1" placeholder="Pendaftaran sudah ditutup" disabled />
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="form-group">
+              <label for="nama2">Nama Peserta 2 <span class="optional">(Opsional)</span></label>
+              <input type="text" id="nama2" name="Nama Peserta 2" placeholder="Pendaftaran sudah ditutup" disabled />
+            </div>
+
+            <div class="form-group">
+              <label for="hp2">No. HP/WA Peserta 2 <span id="labelHp2Req" class="optional">(Opsional)</span></label>
+              <input type="text" id="hp2" name="No. HP/WA Peserta 2" placeholder="Pendaftaran sudah ditutup" disabled />
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="form-group">
+              <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan salinan isian Form ini)</span></label>
+              <input type="email" id="email" name="email" placeholder="Pendaftaran sudah ditutup" disabled />
+            </div>
+
+            <button type="button" id="submitBtn" class="btn-submit btn-closed" disabled>Pendaftaran Sudah Ditutup</button>
+          </form>
         </div>
-
-        <form name="Biodata">
-          <input type="hidden" name="sheet_name" value="BunSpreadsheet" />
-
-          <div class="form-group">
-            <label for="wilayahSelect">Wilayah <span class="required">*</span></label>
-            <select id="wilayahSelect" name="Wilayah" required>
-              <option value="">-- Memuat Data Wilayah... --</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="lingkSelect">Lingkungan <span class="required">*</span></label>
-            <select id="lingkSelect" name="Lingkungan" disabled required>
-              <option value="">-- Pilih Wilayah Terlebih Dahulu --</option>
-            </select>
-          </div>
-
-          <div class="section-divider"></div>
-          
-          <!-- Tambahan Pertanyaan Lilin Adven -->
-          <div class="form-group">
-            <label for="beliLilin">Apakah Lingkungan Anda mau membeli Lilin Adven? <span class="required">*</span></label>
-            <select id="beliLilin" name="Beli Lilin" required>
-              <option value="">-- Pilih Jawaban --</option>
-              <option value="Ya">Ya</option>
-              <option value="Tidak">Tidak</option>
-            </select>
-          </div>
-
-          <div class="section-divider"></div>
-
-          <div class="form-group">
-            <label for="nama1">Nama Peserta 1 <span class="required">*</span></label>
-            <input type="text" id="nama1" name="Nama Peserta 1" placeholder="Masukkan nama peserta 1" required />
-          </div>
-
-          <div class="form-group">
-            <label for="hp1">No. HP/WA Peserta 1 <span class="required">*</span></label>
-            <input type="text" id="hp1" name="No. HP/WA Peserta 1" placeholder="Contoh: 081234567890" pattern="^08\d{7,11}$" title="Format nomor HP harus diawali 08 dan berjumlah 9-13 digit angka" required />
-          </div>
-
-          <div class="section-divider"></div>
-
-          <div class="form-group">
-            <label for="nama2">Nama Peserta 2 <span class="optional">(Opsional)</span></label>
-            <input type="text" id="nama2" name="Nama Peserta 2" placeholder="Masukkan nama peserta 2" />
-          </div>
-
-          <div class="form-group">
-            <label for="hp2">No. HP/WA Peserta 2 <span id="labelHp2Req" class="optional">(Opsional)</span></label>
-            <input type="text" id="hp2" name="No. HP/WA Peserta 2" placeholder="Contoh: 081234567890" pattern="^08\d{7,11}$" title="Format nomor HP harus diawali 08 dan berjumlah 9-13 digit angka" />
-          </div>
-
-          <div class="section-divider"></div>
-
-          <div class="form-group">
-            <label for="email">Email <span class="optional">(Opsional - Jika ingin mendapatkan salinan isian Form ini)</span></label>
-            <input type="email" id="email" name="email" placeholder="contoh@email.com" autocomplete="email" />
-          </div>
-
-          <input type="text" name="mobile_number" style="display:none !important;" tabindex="-1" autocomplete="off" />
-
-          <button type="submit" id="submitBtn" class="btn-submit">Kirim Pendaftaran</button>
-        </form>
-      </div>
-
-      <!-- Thank You Screen -->
-      <div id="thankYouContainer" class="thank-you-card hidden">
-        <h2>🎉 Terima Kasih!</h2>
-        <p>Pendaftaran Anda untuk Sosialisasi Bulan Keluarga 2026 telah berhasil disimpan.</p>
-
-        <div class="summary-box">
-          <div class="summary-item"><strong>Wilayah:</strong> <span id="resWilayah"></span></div>
-          <div class="summary-item"><strong>Lingkungan:</strong> <span id="resLingk"></span></div>
-          <div class="summary-item"><strong>Beli Lilin Adven:</strong> <span id="resBeliLilin"></span></div>
-          <div class="summary-item"><strong>Peserta 1:</strong> <span id="resNama1"></span> (<span id="resHp1"></span>)</div>
-          <div class="summary-item" id="resPeserta2Row"><strong>Peserta 2:</strong> <span id="resNama2"></span> (<span id="resHp2"></span>)</div>
-          <div class="summary-item" id="resEmailRow"><strong>Email Confirmation:</strong> <span id="resEmail"></span></div>
-          <div class="summary-item"><strong>Waktu Pendaftaran:</strong> <span id="resTime"></span></div>
-        </div>
-
-        <button type="button" class="btn-submit" onclick="closeWindow()">Tutup</button>
       </div>
 
     </div>
@@ -144,10 +188,6 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋�
       <p>Wil St. Theresia dari Kanak Kanak Yesus - Katedral Jakarta</p>
     </footer>
   </div>
-
-	
-
-  </div>	
 	
   <!-- Custom Modal HTML -->
   <div id="customModal" class="modal-overlay hidden">
@@ -159,7 +199,6 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋�
   </div>
 
   <script>
-    // --- Custom Modal Helper Functions ---
     function showCustomModal(title, message) {
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalMessage').textContent = message;
@@ -170,194 +209,21 @@ Sampai bertemu dan berproses bersama di Sosialisasi Bulan Keluarga 2026! 👋�
       document.getElementById('customModal').classList.add('hidden');
     }
 
-// --- Auto-Disable Button Deadline Check (13 Nov 2026, 11:59 WIB) ---
-    const DEADLINE = new Date("2026-11-13T23:59:59+07:00");
-
-    function isPastDeadline() {
-      return new Date() >= DEADLINE;
-    }
-
-    function applyDeadlineCheck() {
-      const submitBtn = document.getElementById('submitBtn');
-      if (isPastDeadline()) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Pendaftaran Sudah Ditutup';
-        submitBtn.style.backgroundColor = '#6c757d';
-        submitBtn.style.cursor = 'not-allowed';
-        return true;
-      }
-      return false;
-    }
-
+    // Pastikan seluruh input dan select tetap terkunci & blokir submit
     document.addEventListener("DOMContentLoaded", function () {
-      applyDeadlineCheck();
-    });
-	  
-    // --- 1. JSONP Dropdown Data Loader ---
-    const sheetID = "1KOJamWs_pc15iqdGXyA4vR-NTeuKLXHWKZDjerbJPbo";
-    const sheetName = "wildanlingk";
-    let sheetData = [];
-
-    window.googleSheetHandler = function (data) {
-      const rows = data.table.rows.slice(1);
-      sheetData = rows.map(row => {
-        const wilayah = (row.c && row.c[0] && row.c[0].v !== null) ? row.c[0].v.toString().trim() : "";
-        const lingk = [];
-        for (let i = 1; i <= 4; i++) {
-          if (row.c && row.c[i] && row.c[i].v !== null && row.c[i].v !== undefined) {
-            const v = row.c[i].v.toString().trim();
-            if (v) lingk.push(v);
-          }
-        }
-        return { wilayah, lingk };
-      }).filter(item => item.wilayah !== "");
-
-      populateWilayahDropdown();
-    };
-
-    function populateWilayahDropdown() {
-      const wSel = document.getElementById("wilayahSelect");
-      wSel.innerHTML = '<option value="">-- Pilih Wilayah --</option>';
-      sheetData.forEach(item => {
-        const opt = document.createElement("option");
-        opt.value = item.wilayah;
-        opt.textContent = item.wilayah;
-        wSel.appendChild(opt);
-      });
-    }
-
-    document.getElementById("wilayahSelect").addEventListener("change", function () {
-      const selectedWilayah = this.value;
-      const lSel = document.getElementById("lingkSelect");
-      lSel.innerHTML = '<option value="">-- Pilih Lingkungan --</option>';
-
-      if (!selectedWilayah) {
-        lSel.disabled = true;
-        return;
-      }
-
-      const match = sheetData.find(item => item.wilayah === selectedWilayah);
-      if (match && match.lingk.length > 0) {
-        match.lingk.forEach(lingkVal => {
-          const opt = document.createElement("option");
-          opt.value = lingkVal;
-          opt.textContent = lingkVal;
-          lSel.appendChild(opt);
+      const form = document.forms['Biodata'];
+      if (form) {
+        const elements = form.querySelectorAll('input, select, textarea, button');
+        elements.forEach(el => {
+          el.disabled = true;
         });
-        lSel.disabled = false;
-      } else {
-        lSel.disabled = true;
-      }
-    });
 
-    const script = document.createElement("script");
-    script.src = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=responseHandler:googleSheetHandler&sheet=${encodeURIComponent(sheetName)}`;
-    document.body.appendChild(script);
-
-    // --- 2. Dynamic Validation for Peserta 2 ---
-    const nama2Input = document.getElementById('nama2');
-    const hp2Input = document.getElementById('hp2');
-    const labelHp2Req = document.getElementById('labelHp2Req');
-
-    nama2Input.addEventListener('input', function() {
-      if (this.value.trim() !== '') {
-        hp2Input.required = true;
-        labelHp2Req.innerHTML = '<span class="required">*</span>';
-      } else {
-        hp2Input.required = false;
-        labelHp2Req.innerHTML = '<span class="optional">(Opsional)</span>';
-      }
-    });
-
-    // --- 3. Google Apps Script Form Submission ---
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby_B-RuEcSvBo2Oo9HiNpFKm59BvBBk2slqZw68bp0-LDtsEFH5Hdq6JVABUkwiRB9u/exec';
-    const form = document.forms['Biodata'];
-    const submitBtn = document.getElementById('submitBtn');
-    const formContainer = document.getElementById('formContainer');
-    const thankYouContainer = document.getElementById('thankYouContainer');
-
-	form.addEventListener('submit', e => {
-      e.preventDefault();
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Mengirim Data...';
-
-      const formData = new FormData(form);
-      const data = new URLSearchParams(formData);
-
-      fetch(scriptURL, { method: 'POST', body: data })
-        .then(response => response.json())
-        .then(response => {
-          if (response.result === 'success') {
-            document.getElementById('resWilayah').textContent = formData.get('Wilayah');
-            document.getElementById('resLingk').textContent = formData.get('Lingkungan');
-            
-            // Ganti ini: Gunakan jawaban final dari backend jika tersedia
-            document.getElementById('resBeliLilin').textContent = response.finalBeliLilin || formData.get('Beli Lilin');
-            
-            document.getElementById('resNama1').textContent = formData.get('Nama Peserta 1');
-            document.getElementById('resHp1').textContent = formData.get('No. HP/WA Peserta 1');
-
-            const nama2 = formData.get('Nama Peserta 2');
-            const hp2 = formData.get('No. HP/WA Peserta 2');
-            const resPeserta2Row = document.getElementById('resPeserta2Row');
-            if (nama2) {
-              document.getElementById('resNama2').textContent = nama2;
-              document.getElementById('resHp2').textContent = hp2;
-              resPeserta2Row.classList.remove('hidden');
-            } else {
-              resPeserta2Row.classList.add('hidden');
-            }
-
-            const emailVal = formData.get('email');
-            const resEmailRow = document.getElementById('resEmailRow');
-            if (emailVal) {
-              document.getElementById('resEmail').textContent = emailVal;
-              resEmailRow.classList.remove('hidden');
-            } else {
-              resEmailRow.classList.add('hidden');
-            }
-
-            document.getElementById('resTime').textContent = new Date().toLocaleString('id-ID');
-
-            formContainer.classList.add('hidden');
-            thankYouContainer.classList.remove('hidden');
-            form.reset();
-            document.getElementById('lingkSelect').disabled = true;
-
-            // Munculkan pop up khusus jika ada warningMessage dari backend
-            if (response.warningMessage) {
-              showCustomModal('⚠️ Info Pembelian Lilin', response.warningMessage);
-            }
-
-          } else if (response.result === 'quota_full' || response.result === 'quota_exceeded' || response.result === 'duplicate') {
-            showCustomModal('⚠️ Batas Pendaftaran', response.message);
-          } else {
-            showCustomModal('❌ Terjadi Kesalahan', response.error || response.message || 'Gagal menyimpan data');
-          }
-        })
-        .catch(error => {
-          console.error('Error!', error.message);
-          showCustomModal('🌐 Gangguan Koneksi', 'Gagal terhubung ke server. Periksa koneksi internet Anda.');
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Pendaftaran';
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          showCustomModal('🚫 Pendaftaran Ditutup', 'Maaf, pendaftaran Sosialisasi Bulan Keluarga 2026 sudah ditutup.');
         });
+      }
     });
-	
-// --- 4. Fungsi Tutup Halaman ---
-    function closeWindow() {
-      // 1. Coba tutup tab/jendela
-      window.close();
-
-      // 2. Fallback jika tab dibuka langsung dari link biasa (security browser memblokir window.close)
-      setTimeout(function () {
-        if (!window.closed) {
-          window.location.href = "about:blank";
-        }
-      }, 300);
-    }
   </script>
 </body>
 </html>
